@@ -1,28 +1,18 @@
 package com.byl.mvvm.ui.base
 
-import android.app.Activity
 import android.app.ProgressDialog
-import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
-import android.view.View
-import android.view.WindowManager
-import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
 import com.byl.mvvm.api.error.ErrorResult
-import com.byl.mvvm.event.EventCode
-import com.byl.mvvm.event.EventMessage
 import com.byl.mvvm.utils.LogUtil
 import com.byl.mvvm.utils.ToastUtil
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
 import java.lang.reflect.ParameterizedType
 
 
@@ -73,14 +63,9 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
 
     override fun onDestroy() {
         super.onDestroy()
-        EventBus.getDefault().unregister(this)
     }
 
-    //事件传递
-    @Subscribe
-    fun onEventMainThread(msg: EventMessage) {
-        handleEvent(msg)
-    }
+
 
     open fun getClassName(): String? {
         val className = "BaseActivity"
@@ -100,7 +85,6 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
     abstract fun initVM()
 
     private fun init() {
-        EventBus.getDefault().register(this)
         //loading
         vm.isShowLoading.observe(this, Observer {
             if (it) showLoading() else dismissLoading()
@@ -124,14 +108,6 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : AppCompatAct
         loadingDialog = null
     }
 
-    /**
-     * 消息、事件接收回调
-     */
-    open fun handleEvent(msg: EventMessage) {
-        if (msg.code == EventCode.LOGIN_OUT) {
-            finish()
-        }
-    }
 
     /**
      * 接口请求错误回调

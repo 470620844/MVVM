@@ -2,13 +2,12 @@ package com.byl.mvvm
 
 import android.app.Application
 import android.content.Context
-import com.byl.mvvm.event.Event
-import com.byl.mvvm.event.EventMessage
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter
 import com.scwang.smartrefresh.layout.header.ClassicsHeader
+import com.tencent.mmkv.MMKV
 
 
 class App : Application() {
@@ -17,15 +16,13 @@ class App : Application() {
         var DEBUG: Boolean = false
         lateinit var instance: App
 
-        fun post(eventMessage: EventMessage) {
-            Event.getInstance().post(eventMessage)
-        }
     }
 
     override fun onCreate() {
         super.onCreate()
         instance = this
         DEBUG = true
+        MMKV.initialize(this)
     }
 
     init {

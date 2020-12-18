@@ -1,9 +1,7 @@
 package com.byl.mvvm.api.interceptor
 
 import com.byl.mvvm.api.URLConstant
-import com.byl.mvvm.utils.LogUtil.showHttpApiLog
-import com.byl.mvvm.utils.LogUtil.showHttpHeaderLog
-import com.byl.mvvm.utils.LogUtil.showHttpLog
+import com.byl.mvvm.utils.LogUtil
 import okhttp3.Interceptor
 import okhttp3.RequestBody
 import okhttp3.Response
@@ -34,7 +32,7 @@ class LoggingInterceptor : Interceptor {
             api = api.substring(0, api.indexOf("?"))
         }
         val result = responseBody.string()
-        showHttpHeaderLog(
+        LogUtil.i(
             String.format(
                 "%n%s%n%s",
                 " ",
@@ -42,7 +40,7 @@ class LoggingInterceptor : Interceptor {
             )
         )
         if (request.method() == "POST" || request.method() == "PUT") {
-            if (api.contains("UpLoadFile")) showHttpApiLog(
+            if (api.contains("UpLoadFile")) LogUtil.i(
                 String.format(
                     "%s%n%s%n%s%n%s%n%s%n",
                     "请求URL>>$httpUrl",
@@ -51,7 +49,7 @@ class LoggingInterceptor : Interceptor {
                     "请求参数>>" + request.body().toString(),
                     "请求耗时>>" + String.format("%.1f", (t2 - t1) / 1e6) + "ms"
                 )
-            ) else showHttpApiLog(
+            ) else LogUtil.i(
                 java.lang.String.format(
                     "%s%n%s%n%s%n%s%n%s%n",
                     "请求URL>>$httpUrl",
@@ -62,7 +60,7 @@ class LoggingInterceptor : Interceptor {
                 )
             )
         } else {
-            showHttpApiLog(
+            LogUtil.i(
                 String.format(
                     "%s%n%s%n%s%n%s%n",
                     "请求URL>>$httpUrl",
@@ -78,7 +76,7 @@ class LoggingInterceptor : Interceptor {
             for (i in 0..chunkCount) {
                 val max = 4000 * (i + 1)
                 if (max >= result.length) {
-                    showHttpLog(
+                    LogUtil.i(
                         String.format(
                             "%s%n%s%n%s%n",
                             "请求结果>>>" + result.substring(4000 * i),
@@ -87,7 +85,7 @@ class LoggingInterceptor : Interceptor {
                         )
                     )
                 } else {
-                    showHttpLog(
+                    LogUtil.i(
                         String.format(
                             "%s%n%s%n%s%n",
                             "请求结果>>>" + result.substring(4000 * i, max),
@@ -98,7 +96,7 @@ class LoggingInterceptor : Interceptor {
                 }
             }
         } else {
-            showHttpLog(String.format("%s%n%s%n%s%n", "请求结果>>>$result", " ", ""))
+            LogUtil.i(String.format("%s%n%s%n%s%n", "请求结果>>>$result", " ", ""))
         }
         return response
     }

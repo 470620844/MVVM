@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -13,11 +12,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
 import com.byl.mvvm.api.error.ErrorResult
-import com.byl.mvvm.event.EventMessage
 import com.byl.mvvm.utils.LogUtil
 import com.byl.mvvm.utils.ToastUtil
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
 import java.lang.reflect.ParameterizedType
 
 
@@ -78,7 +74,7 @@ abstract class BaseFragment<VM : BaseViewModel, VB : ViewBinding> : Fragment() {
     }
 
     private fun init() {
-        EventBus.getDefault().register(this)
+
         //loading
         vm.isShowLoading.observe(this, Observer {
             if (it) showLoading() else dismissLoding()
@@ -92,14 +88,9 @@ abstract class BaseFragment<VM : BaseViewModel, VB : ViewBinding> : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        EventBus.getDefault().unregister(this)
     }
 
-    //事件传递
-    @Subscribe
-    fun onEventMainThread(msg: EventMessage) {
-        handleEvent(msg)
-    }
+
 
     open fun getClassName(): String? {
         val className = "BaseFragment"
@@ -155,10 +146,7 @@ abstract class BaseFragment<VM : BaseViewModel, VB : ViewBinding> : Fragment() {
         loadingDialog = null
     }
 
-    /**
-     * 消息、事件接收回调
-     */
-    open fun handleEvent(msg: EventMessage) {}
+
 
     /**
      * 接口请求错误回调

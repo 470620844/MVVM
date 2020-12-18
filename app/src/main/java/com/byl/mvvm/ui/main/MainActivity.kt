@@ -4,12 +4,13 @@ import android.content.Intent
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.byl.mvvm.databinding.ActivityMainBinding
-import com.byl.mvvm.event.EventCode
-import com.byl.mvvm.event.EventMessage
 import com.byl.mvvm.ui.base.BaseActivity
 import com.byl.mvvm.ui.main.adapter.ArticleListAdapter
 import com.byl.mvvm.ui.main.model.ArticleBean
+import com.byl.mvvm.utils.LogUtil
 import com.byl.mvvm.utils.ToastUtil
+import com.jeremyliao.liveeventbus.LiveEventBus
+
 
 class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
 
@@ -31,10 +32,10 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
 
         v.refreshLayout.setOnRefreshListener {//下拉刷新
             page = 0
-            vm.getArticleList(page,false)
+            vm.getArticleList(page, false)
         }
         v.refreshLayout.setOnLoadMoreListener {//上拉加载
-            vm.getArticleList(++page,false)
+            vm.getArticleList(++page, false)
         }
     }
 
@@ -43,6 +44,16 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
     }
 
     override fun initData() {
+        LogUtil.e("initData 注册监听")
+        LiveEventBus
+            .get("some_key", String::class.java)
+            .observe(this, Observer {
+                LogUtil.e("it", it)
+                ToastUtil.showToast(mContext, "主页：刷新")
+                page = 0
+                vm.getArticleList(page, false)
+
+            })
 
     }
 
@@ -56,15 +67,5 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
         })
     }
 
-    /**
-     * 接收消息
-     */
-    override fun handleEvent(msg: EventMessage) {
-        super.handleEvent(msg)
-        if (msg.code == EventCode.REFRESH) {
-            ToastUtil.showToast(mContext, "主页：刷新")
-            page = 0
-            vm.getArticleList(page,false)
-        }
-    }
+
 }
